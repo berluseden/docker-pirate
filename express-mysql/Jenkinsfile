@@ -17,23 +17,17 @@ pipeline {
   environment {
       // General Variables for Pipeline
       PROJECT_ROOT = 'express-mysql/app'
-      EMAIL_ADDRESS = 'san99tiagodevsecops@gmail.com'
-      REGISTRY = 'san99tiago/docker-pirate-express'
+      EMAIL_ADDRESS = 'berluseden@gmail.com'
+      REGISTRY = 'berluseden/demojenkins'
   }
 
-  stages {
-      stage('Hello') {
-        steps {
-          // First stage is a sample hello-world step to verify correct Jenkins Pipeline
-          echo 'Hello World, I am Happy'
-          echo 'This is my amazing Pipeline'
-        }
+ stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/berluseden/docker-pirate', branch: 'main',])
+
       }
-      stage('Checkout') {
-        steps {
-        // Get Github repo using Github credentials (previously added to Jenkins credentials)
-        checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/san99tiago/docker-pirate']]])        }
-      }
+    }
       stage('Install dependencies') {
         steps {
           sh 'npm --version'
@@ -85,8 +79,6 @@ pipeline {
       }
       stage('Deploy docker-image') {
         steps {
-          // If the Dockerhub authentication stopped, do it again
-          sh 'docker login'
           sh "docker push ${REGISTRY}:${BUILD_NUMBER}"
         }
       }
