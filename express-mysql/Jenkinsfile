@@ -18,6 +18,7 @@ pipeline {
       PROJECT_ROOT = 'express-mysql/app'
       EMAIL_ADDRESS = 'berluseden@gmail.com'
       REGISTRY = 'berluseden/demojenkins'
+      registryCredential = 'dockerhub'
   }
 
  stages {
