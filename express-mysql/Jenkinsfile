@@ -6,7 +6,7 @@ def qualityGateValidation(qg) {
   }
   // emailext body: "CONGRATS SANTI: Code coverage is higher than 80%  in Pipeline ${BUILD_NUMBER} - SUCCESS", subject: 'Info - Correct Pipeline', to: "${EMAIL_ADDRESS}"
   return false
-  
+}
 pipeline {
   agent any
 
