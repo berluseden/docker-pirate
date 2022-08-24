@@ -53,8 +53,7 @@ pipeline {
                           -Dsonar.projectVersion=0.0.${BUILD_NUMBER} \
                           -Dsonar.host.url=http://172.25.255.180:9000 \
                           -Dsonar.sources=./${PROJECT_ROOT}/app.js,./${PROJECT_ROOT}/config/db.config.js,./${PROJECT_ROOT}/routes/developers.js \
-                          -Dsonar.login=admin \
-                          -Dsonar.password=sonar \
+                          -Dsonar.login=b1478a87-c99f-404a-9e50-8dd4897978cf \
                           -Dsonar.tests=./${PROJECT_ROOT}/test \
                           -Dsonar.javascript.lcov.reportPaths=./${PROJECT_ROOT}/coverage/lcov.info"
             }
