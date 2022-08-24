@@ -1,11 +1,4 @@
-def qualityGateValidation(qg) {
-  if (qg.status != 'OK') {
-    // emailext body: "WARNING SANTI: Code coverage is lower than 80% in Pipeline ${BUILD_NUMBER}", subject: 'Error Sonar Scan,   Quality Gate', to: "${EMAIL_ADDRESS}"
-    return true
-  }
-  // emailext body: "CONGRATS SANTI: Code coverage is higher than 80%  in Pipeline ${BUILD_NUMBER} - SUCCESS", subject: 'Info - Correct Pipeline', to: "${EMAIL_ADDRESS}"
-  return false
-}
+
 pipeline {
   agent any
 
@@ -14,10 +7,9 @@ pipeline {
   }
 
   environment {
-      // General Variables for Pipeline
+     
       PROJECT_ROOT = 'express-mysql/app'
-      EMAIL_ADDRESS = 'berluseden@gmail.com'
-      REGISTRY = 'berluseden/demojenkins'
+      imagename = "berluseden/demojenkins"
       registryCredential = 'dockerhub'
   }
 
@@ -70,15 +62,29 @@ pipeline {
             }
           }
       }
-      stage('Build docker-image') {
-        steps {
-          sh "cd ./${PROJECT_ROOT};docker build -t ${REGISTRY}:${BUILD_NUMBER} . "
+     stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
         }
       }
-      stage('Deploy docker-image') {
-        steps {
-          sh "docker push ${REGISTRY}:${BUILD_NUMBER}"
+    }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+          }
         }
       }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
   }
 }
