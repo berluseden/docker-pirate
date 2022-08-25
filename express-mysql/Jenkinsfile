@@ -22,27 +22,20 @@ pipeline {
   }
 
  stages {
-    stage('Cloning Git') {
+    stage('build') {
       steps {
         git([url: 'https://github.com/berluseden/docker-pirate', branch: 'main',])
-
+            sh "cd ${PROJECT_ROOT}; npm install
       }
     }
-      stage('Install dependencies') {
+      
+      stage('tests') {
         steps {
-          sh 'npm --version'
-          sh "cd ${PROJECT_ROOT}; npm install"
-        }
-      }
-      stage('Unit tests') {
-        steps {
-          // Run unit tests
           sh "cd ${PROJECT_ROOT}; npm run test"
         }
       }
       stage('Generate coverage report') {
         steps {
-          // Run code-coverage reports
           sh "cd ${PROJECT_ROOT}; npm run coverage"
         }
       }
@@ -52,9 +45,7 @@ pipeline {
             scannerHome = tool 'sonar-scanner'
           }
           steps {
-            // "sonarqube" is the server configured in "Configure System"
             withSonarQubeEnv('sonarqube') {
-              // Execute the SonarQube scanner with desired flags
               sh "${scannerHome}/bin/sonar-scanner \
                           -Dsonar.projectKey=SimpleExpressExample:Test \
                           -Dsonar.projectName=SimpleExpressExample \
@@ -70,15 +61,10 @@ pipeline {
             }
           }
       }
-     stage('Build docker-image') {
-        steps {
-          sh "cd ./${PROJECT_ROOT};docker build -t ${REGISTRY}:${BUILD_NUMBER} . "
-        }
-      }
+     
       stage('Deploy docker-image') {
         steps {
-          // If the Dockerhub authentication stopped, do it again
-          sh 'docker login'
+          sh "cd ./${PROJECT_ROOT};docker build -t ${REGISTRY}:${BUILD_NUMBER} . "
           sh "docker push ${REGISTRY}:${BUILD_NUMBER}"
         }
       }
