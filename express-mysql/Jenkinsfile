@@ -12,23 +12,37 @@ pipeline {
       REGISTRY = "berluseden/demojenkins"
   }
 
- stages {
-    stage('build') {
-      steps {
-        git([url: 'https://github.com/berluseden/docker-pirate', branch: 'main',])
-            sh "cd ${PROJECT_ROOT}; npm install
-      }
-    }
-      
-      stage('tests') {
+  stages {
+      stage('Hello') {
         steps {
+          // First stage is a sample hello-world step to verify correct Jenkins Pipeline
+          echo 'Hello World, I am Happy'
+          echo 'This is my amazing Pipeline'
+        }
+      }
+      stage('Checkout') {
+        steps {
+        // Get Github repo using Github credentials (previously added to Jenkins credentials)
+        checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/berluseden/docker-pirate']]])        }
+      }
+      stage('Install dependencies') {
+        steps {
+          sh 'npm --version'
+          sh "cd ${PROJECT_ROOT}; npm install"
+        }
+      }
+      stage('Unit tests') {
+        steps {
+          // Run unit tests
           sh "cd ${PROJECT_ROOT}; npm run test"
         }
       }
       stage('Generate coverage report') {
         steps {
+          // Run code-coverage reports
           sh "cd ${PROJECT_ROOT}; npm run coverage"
         }
+     
       }
       stage('scan') {
           environment {
