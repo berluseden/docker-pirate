@@ -13,16 +13,8 @@ pipeline {
   }
 
   stages {
-      stage('Hello') {
-        steps {
-          // First stage is a sample hello-world step to verify correct Jenkins Pipeline
-          echo 'Hello World, I am Happy'
-          echo 'This is my amazing Pipeline'
-        }
-      }
       stage('Checkout') {
         steps {
-        // Get Github repo using Github credentials (previously added to Jenkins credentials)
         checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/berluseden/docker-pirate']]])        }
       }
       stage('Install dependencies') {
